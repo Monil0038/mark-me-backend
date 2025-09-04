@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from src.config import Config
 from src.user.crud import user_crud
-from src.user.models import AuthProvider, User
+from src.user.models import User
 from utils.db.session import get_db
 
 

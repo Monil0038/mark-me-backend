@@ -26,7 +26,7 @@ class UserCRUD(CRUDBase[User, UserBase, UserUpdate]):
     def update(
         self, db: Session, *, db_obj: User, obj_in: Union[UserUpdate, Dict[str, Any]]
     ) -> User:
-        obj_data: dict = jsonable_encoder(db_obj)
+        obj_data: dict = jsonable_encoder(db_obj, exclude_unset=True)
         password = obj_data.pop("password", None)
         if isinstance(obj_in, dict):
             update_data = obj_in
@@ -35,8 +35,6 @@ class UserCRUD(CRUDBase[User, UserBase, UserUpdate]):
         for field in obj_data:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
-        if password:
-            db_obj.set_password(password)
         db.add(db_obj)
         db.commit()
         return db_obj

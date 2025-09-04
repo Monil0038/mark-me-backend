@@ -11,15 +11,9 @@ from utils.db.base import ModelBase
 
 
 class UserRoles(str, Enum):
-    USER = "USER"
-    ADMIN = "ADMIN"
     SUPER_ADMIN = "SUPER_ADMIN"
-
-
-class AuthProvider(Enum):
-    GOOGLE = "google"
-    FACEBOOK = "facebook"
-    LINKEDIN = "linkedin"
+    ADMIN = "ADMIN"
+    FACULTY = "FACULTY"
 
 
 class User(ModelBase):
@@ -31,12 +25,11 @@ class User(ModelBase):
     phone_number_country_code = Column(String)
     phone_number = Column(String, unique=True, nullable=True)
 
-    email_verified = Column(Boolean, default=False)
-    phone_number_verified = Column(Boolean, default=False)
-
     password = Column(String, nullable=False)
 
-    role = Column(String, default=UserRoles.USER.value)
+    department = Column(String, nullable=False)
+
+    role = Column(String, default=UserRoles.FACULTY.value)
     is_active = Column(Boolean, default=True)
     is_banned = Column(Boolean, default=False)
 

@@ -15,19 +15,17 @@ class UserUpdate(BaseModel):
     phone_number_country_code: Optional[str] = None
     phone_number: Optional[str] = None
 
+    department: Optional[str] = None
+
 
 class UserRequest(UserUpdate):
     firstname: str
     lastname: str
     email: str
-    password: str
 
 
 class UserResponse(UserUpdate):
-    email_verified: Optional[bool] = False
-    phone_number_verified: Optional[bool] = False
-
-    role: str = UserRoles.USER.value
+    role: str = UserRoles.FACULTY.value
     is_active: bool = True
     is_banned: bool = False
 
@@ -49,3 +47,12 @@ class LoginRequest(BaseModel):
 class Token(BaseModel):
     user: UserResponse
     token: str
+
+
+class FacultyResponse(UserUpdate):
+    id: str
+    is_active: bool = True
+    is_banned: bool = False
+
+    class Config:
+        from_attributes = True

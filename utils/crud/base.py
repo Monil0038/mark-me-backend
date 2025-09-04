@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 
 from utils.db.base import ModelBase
 
+from src.user.models import UserRoles
+
 ModelType = TypeVar("ModelType", bound=ModelBase)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
@@ -100,3 +102,14 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.add_all(db_objs)
         db.commit()
         return db_objs
+    
+    def get_multi_faculty(
+        self, db: Session, *, page: int = 1, per_page: int = 10
+    ) -> List[ModelType]:
+        return (
+            db.query(self.model)
+            .filter(self.model.is_deleted == False, self.model.role == UserRoles.FACULTY.value)
+            .offset(self.calc_offset(page, per_page))
+            .limit(per_page)
+            .all()
+        )

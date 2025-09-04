@@ -47,12 +47,21 @@ def run_migrations_offline() -> None:
 
     """
     url = get_url()
+    def include_object(object, name, type_, reflected, compare_to):
+        # Only keep objects in the "public" schema
+        if type_ == "table" and object.schema != "public":
+            return False
+        return True
+
     context.configure(
         url=url,
-        include_schemas=True,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        compare_type=True,
+        compare_server_default=True,
+        include_schemas=True,
+        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -70,11 +79,10 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            compare_type=True,
-            compare_server_default=True,
-            include_schemas=True,
             connection=connection,
             target_metadata=target_metadata,
+            compare_type=True,
+            compare_server_default=True,
         )
 
         with context.begin_transaction():
