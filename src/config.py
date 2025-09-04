@@ -31,6 +31,7 @@ class Config:
             "https://localhost.tiangolo.com",
             "http://localhost:3000",
             "http://localhost:8080",
+            "https://mark-me-backend.onrender.com",
         ]
     else:
         BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
