@@ -1,0 +1,17 @@
+alembic
+fastapi
+pydantic
+python-dotenv
+SQLAlchemy
+uvicorn
+requests
+gunicorn
+pytest
+pytest_factoryboy
+pytest_cov
+psycopg2
+pyjwt
+httpx
+passlib
+pre-commit
+flake8
