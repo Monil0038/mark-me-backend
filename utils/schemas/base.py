@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class BaseSchema(BaseModel):
-    id: Optional[str]
+    id: Optional[str] = None
     created_by: Optional[str]
     updated_by: Optional[str]
     is_deleted: Optional[bool] = False

@@ -48,13 +48,12 @@ class Config:
             path=os.environ["POSTGRES_DB"] or "",
         ).unicode_string()
 
-    ##############################################################################################
-    #       ModelBase config is done. if you are adding new domain to this project please make
-    # separate config division like made for user below this. if you have different integration
-    # please also make sub division.
-    ##############################################################################################
-
     # =============================== User Domain Config =========================================
     JWT_ALGORITHM: str = os.environ["JWT_ALGORITHM"]
     JWT_SECRET_KEY: str = os.environ["JWT_SECRET_KEY"]
     JWT_EXPIRATION_TIME: int = os.environ["JWT_EXPIRATION_TIME"]
+
+    # Brevo SMTP
+    BREVO_URL: str = os.environ["BREVO_URL"]
+    BREVO_API_KEY: str = os.environ["BREVO_API_KEY"]
+    BREVO_SENDER_EMAIL: str = os.environ["BREVO_SENDER_EMAIL"]

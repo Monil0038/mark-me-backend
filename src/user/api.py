@@ -16,7 +16,7 @@ from src.user.schemas import (
     FacultyResponse,
 )
 from src.user.utils.deps import authenticated_user, is_authorized_for
-from src.user.utils.utils import get_sso_user
+from src.user.utils.smtp import send_email
 from utils.db.session import get_db
 
 logger = logging.getLogger(__name__)
@@ -87,6 +87,13 @@ def register_faculty(user_req: UserRequest, user_db: is_authorized_for([UserRole
             id=user_id, created_by=user_id, updated_by=user_id, password=password, **user_req.model_dump()
         ),
     )
+    subject = "🎉 Welcome to MarkMe – Your GLS Faculty Account is Ready"
+    user_info = {
+        "firstname": user.firstname,
+        "email": user.email,
+        "password": password
+    }
+    send_email(user.email, subject, user_info,"faculty")
     return user
 
 @user_router.get(

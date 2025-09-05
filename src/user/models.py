@@ -14,6 +14,7 @@ class UserRoles(str, Enum):
     SUPER_ADMIN = "SUPER_ADMIN"
     ADMIN = "ADMIN"
     FACULTY = "FACULTY"
+    STUDENT = "STUDENT"
 
 
 class User(ModelBase):

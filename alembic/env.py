@@ -8,6 +8,7 @@ from utils.db.base import ModelBase
 
 # Importing below modules will make their metadata include in the ModelBase class
 from src.user.models import *
+from src.student.models import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
