@@ -33,6 +33,8 @@ class Config:
             "http://localhost:8080",
             "http://localhost:5173",
             "https://mark-me-backend.onrender.com",
+            "https://mark-me-frontend-ibefewd5g-monils-projects-d77ced3c.vercel.app",
+            "https://mark-me-frontend.vercel.app"
         ]
     else:
         BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
