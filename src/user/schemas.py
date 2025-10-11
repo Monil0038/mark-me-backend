@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -53,6 +54,7 @@ class FacultyResponse(UserUpdate):
     id: str
     is_active: bool = True
     is_banned: bool = False
+    created_at: datetime
 
     class Config:
         from_attributes = True

@@ -1,12 +1,10 @@
 import csv
 import io
 import logging
-import uuid
-from typing import List, Dict
+from typing import List
 
 from fastapi import APIRouter, HTTPException, status, UploadFile
 
-from src.student.models import Student
 from src.student.schemas import StudentBase, StudentUpdate, StudentToken, StudentLoginRequest
 from src.user.utils.smtp import send_email
 from src.user.utils.deps import is_authorized_for

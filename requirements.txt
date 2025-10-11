@@ -16,3 +16,6 @@ passlib
 pre-commit
 flake8
 python-multipart
+python-barcode
+pillow
+qrcode
