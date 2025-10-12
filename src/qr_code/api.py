@@ -11,7 +11,10 @@ from fastapi.responses import StreamingResponse
 from src.user.models import UserRoles
 from src.user.utils.deps import is_authorized_for
 from src.qr_code.crud import qr_code_crud
-from src.qr_code.schema import QrCodeBaseSchema, QrCodeRequestSchema, QrCodeUpdateSchema
+from src.attendance.crud import attendance_crud
+from src.student.crud import student_crud
+from src.qr_code.schema import QrCodeBaseSchema, QrCodeRequestSchema, QrCodeUpdateSchema, QrCodeResponseSchema
+from src.attendance.schemas import AttendanceResponseSchema
 
 qr_code = APIRouter()
 
@@ -38,8 +41,8 @@ async def register_student_by_csv(
                 qr_code_data=data,
                 expiry_time=end_time,
                 regenerate_interval_seconds=int(request.regenerate_interval_seconds),
-                created_by=user.id,
-                updated_by=user.id
+                created_by=user.firstname + " " + user.lastname,
+                updated_by=user.firstname + " " + user.lastname
             )
         )
 
@@ -80,14 +83,45 @@ async def retrieve_students(user_db: is_authorized_for([UserRoles.ADMIN.value, U
             detail="Something went wrong"
         )
 
-@qr_code.get("/qr_code/{id}", response_model=QrCodeBaseSchema,status_code=status.HTTP_200_OK)
+@qr_code.get("/qr_code/{id}", response_model=QrCodeResponseSchema,status_code=status.HTTP_200_OK)
 async def retrieve_students(id: str, user_db: is_authorized_for([UserRoles.ADMIN.value, UserRoles.SUPER_ADMIN.value])):
     try:
         user, db = user_db
 
-        students = qr_code_crud.get(db, id)
+        qr_code = qr_code_crud.get(db, id)
 
-        return students
+        attendances = attendance_crud.get_by_qr_code_id(db=db, qr_code_id=qr_code.id)
+        students = student_crud.get_all_student_count(db=db)
+
+        attendance_data = []
+        present_count = 0
+
+        for a in attendances:
+            attendance_data.append(
+                AttendanceResponseSchema(
+                    student_id=a.student_id,
+                    student_first_name=a.student.first_name,
+                    student_last_name=a.student.last_name,
+                    student_roll_no=a.student.roll_no,
+                    student_enrollment=a.student.enrollment_no,
+                    attendance_time=a.attendance_time,
+                    status=a.status,
+                )
+            )
+
+            if str(a.status).lower() == "present":
+                present_count += 1
+
+        total_students = students if students else 0
+        present_percentage = (present_count / total_students * 100) if total_students else 0
+
+        qr_schema = QrCodeResponseSchema.model_validate(qr_code)
+        qr_schema.attendance = attendance_data
+        qr_schema.present_percentage = round(present_percentage, 2)
+        qr_schema.total_students = total_students
+        qr_schema.present_students = present_count
+
+        return qr_schema
     except Exception as e:
         logging.exception("===REASON===: %s", str(e))
         raise HTTPException(

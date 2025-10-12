@@ -56,6 +56,7 @@ class User(ModelBase):
         return jwt.encode(
             {
                 "id": self.id,
+                "fullname": self.firstname + self.lastname,
                 "email": self.email,
                 "role": self.role,
                 "is_active": self.is_active,

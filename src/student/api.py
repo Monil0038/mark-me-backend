@@ -43,7 +43,7 @@ async def register_student_by_csv(
             enroll_number = update_data.enrollment_no[-3::].strip()
             password = student_first_name + "@" + enroll_number
 
-            data = StudentBase(password=password, created_by=user.id, updated_by=user.id, **update_data.model_dump())
+            data = StudentBase(password=password, created_by=user.firstname + " " + user.lastname, updated_by=user.firstname + " " + user.lastname, **update_data.model_dump())
             student_crud.register_student(db=db, obj_in=data)
 
             subject = "🎓 Welcome to MarkMe – Your GLS Student Account is Ready"

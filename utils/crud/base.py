@@ -37,6 +37,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return (
             db.query(self.model)
             .filter(self.model.is_deleted == False)
+            .order_by(self.model.created_at.desc())
             .offset(self.calc_offset(page, per_page))
             .limit(per_page)
             .all()

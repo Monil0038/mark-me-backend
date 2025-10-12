@@ -13,5 +13,19 @@ class AttendanceCRUD(CRUDBase[Attendance, AttendanceBaseSchema, AttendanceUpdate
             .filter(self.model.student_id == student_id, self.model.qr_code_id == qr_code_id)
             .first()
         )
+    
+    def get_by_qr_code_id(self, db: Session, qr_code_id: str) -> Optional[Attendance]:
+        return (
+            db.query(self.model)
+            .filter(self.model.qr_code_id == qr_code_id)
+            .all()
+        )
+    
+    def get_by_student_id(self, db: Session, student_id: str) -> Optional[Attendance]:
+        return (
+            db.query(self.model)
+            .filter(self.model.student_id == student_id)
+            .all()
+        )
 
 attendance_crud = AttendanceCRUD(Attendance)

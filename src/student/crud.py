@@ -18,5 +18,8 @@ class StudentCRUD(CRUDBase[Student, StudentBase, StudentUpdate]):
         db.add(db_obj)
         db.commit()
         return db_obj
+    
+    def get_all_student_count(self, db: Session):
+        return db.query(Student).count()
 
 student_crud = StudentCRUD(Student)

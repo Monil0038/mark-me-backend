@@ -84,7 +84,7 @@ def register_faculty(user_req: UserRequest, user_db: is_authorized_for([UserRole
     user = user_crud.create(
         db,
         obj_in=UserBase(
-            id=user_id, created_by=user_id, updated_by=user_id, password=password, **user_req.model_dump()
+            id=user_id, created_by=user_req.firstname, updated_by=user_req.lastname, password=password, **user_req.model_dump()
         ),
     )
     subject = "🎉 Welcome to MarkMe – Your GLS Faculty Account is Ready"
