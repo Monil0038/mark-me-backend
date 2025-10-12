@@ -7,6 +7,9 @@ from src.attendance.schemas import AttendanceBaseSchema, AttendanceUpdateSchema
 from utils.crud.base import CRUDBase
 
 class AttendanceCRUD(CRUDBase[Attendance, AttendanceBaseSchema, AttendanceUpdateSchema]):
+    def get_all_attendance_count(self, db: Session):
+        return db.query(Attendance).count()
+
     def get_by_user_and_qr_id(self, db: Session, student_id: str, qr_code_id: str) -> Optional[Attendance]:
         return (
             db.query(self.model)

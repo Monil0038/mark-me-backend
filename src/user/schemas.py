@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
 
@@ -58,3 +58,17 @@ class FacultyResponse(UserUpdate):
 
     class Config:
         from_attributes = True
+
+class RecentScanResponse(BaseModel):
+    fullname: Optional[str] = None
+    student_roll_no: Optional[str] = None
+    student_enrollment: Optional[str] = None
+    qr_code_id: Optional[str] = None
+
+class DashboardResponseSchema(BaseModel):
+    total_student: Optional[int] = None
+    total_faculty: Optional[int] = None
+    total_qr: Optional[int] = None
+    total_scan: Optional[int] = None
+
+    recent_scan: Optional[List[RecentScanResponse]] = None

@@ -14,10 +14,17 @@ from src.user.schemas import (
     UserResponse,
     UserUpdate,
     FacultyResponse,
+    DashboardResponseSchema,
+    RecentScanResponse,
 )
 from src.user.utils.deps import authenticated_user, is_authorized_for
 from src.user.utils.smtp import send_email
 from utils.db.session import get_db
+
+from src.student.crud import student_crud
+from src.attendance.crud import attendance_crud
+from src.qr_code.crud import qr_code_crud
+
 
 logger = logging.getLogger(__name__)
 
@@ -117,3 +124,53 @@ def update_user(faculty_id: str, faculty_req: UserUpdate, user_db: is_authorized
         raise HTTPException(detail="Faculty not found", status_code=status.HTTP_404_NOT_FOUND)
 
     return user_crud.update(db, db_obj=faculty, obj_in=faculty_req.model_dump(exclude_unset=True))
+
+@user_router.get("/dashboard", status_code=status.HTTP_200_OK, response_model=DashboardResponseSchema)
+def dashboard(user_db: is_authorized_for([UserRoles.ADMIN.value, UserRoles.SUPER_ADMIN.value])):
+    try:
+        user, db = user_db
+
+        total_student = student_crud.get_all_student_count(db=db) or 0
+        total_faculty = user_crud.get_all_faculty_count(db=db) or 0
+        total_qr = qr_code_crud.get_all_qr_count(db=db) or 0
+        total_scan = attendance_crud.get_all_attendance_count(db=db) or 0
+
+        # TIP: support a small "limit" for latest scans in your CRUD (e.g., 10)
+        recent_scan = attendance_crud.get_multi(db=db, per_page=10)
+
+        recent_items: List[RecentScanResponse] = []
+        for a in recent_scan:
+            stu = getattr(a, "student", None)
+            full_name = None
+            roll_no = None
+            enrollment_no = None
+            if stu:
+                first = getattr(stu, "first_name", "") or ""
+                last = getattr(stu, "last_name", "") or ""
+                full_name = (first + " " + last).strip() or None
+                roll_no = getattr(stu, "roll_no", None)
+                enrollment_no = getattr(stu, "enrollment_no", None)
+
+            recent_items.append(
+                RecentScanResponse(
+                    fullname=full_name,
+                    student_roll_no=roll_no,
+                    student_enrollment=enrollment_no,
+                    qr_code_id=a.qr_code_id,
+                )
+            )
+
+        return DashboardResponseSchema(
+            total_student=int(total_student),
+            total_faculty=int(total_faculty),
+            total_qr=int(total_qr),
+            total_scan=int(total_scan),
+            recent_scan=recent_items,
+        )
+
+    except Exception as e:
+        logging.exception("===REASON===: %s", str(e))
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Something went wrong"
+        )

@@ -3,13 +3,16 @@ from typing import Any, Dict, Union
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
-from src.user.models import User
+from src.user.models import User, UserRoles
 from src.user.schemas import UserBase, UserUpdate
 from utils.crud.base import CRUDBase
 
 
 # user crud
 class UserCRUD(CRUDBase[User, UserBase, UserUpdate]):
+    def get_all_faculty_count(self, db: Session):
+        return db.query(User).where(self.model.role == UserRoles.FACULTY.value).count()
+
     def get_by_email(self, db: Session, email: str) -> User:
         return db.query(User).filter(User.email == email).first()
 
