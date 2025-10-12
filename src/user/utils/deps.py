@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 
 from src.config import Config
 from src.user.crud import user_crud
-from src.user.models import User
+from src.student.crud import student_crud
+from src.user.models import User, UserRoles
 from utils.db.session import get_db
 
 
@@ -40,7 +41,10 @@ def _authenticated_user(
             if not user_id:
                 raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid token")
 
-            user = user_crud.get(db, id=user_id)
+            if payload["role"] == UserRoles.STUDENT.value:
+                user = student_crud.get(db, id=user_id)
+            else:
+                user = user_crud.get(db, id=user_id)
             if not user:
                 raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid User")
         else:
@@ -62,6 +66,10 @@ authenticated_user = Annotated[Tuple[User, Session], Depends(_authenticated_user
 def _is_authorized_for(roles: list):
     def _is_authorized(user_db: authenticated_user):
         user, db = user_db
+
+        if hasattr(user, "roll_no") and user.roll_no:
+            return user, db
+
         if user.role not in roles:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Unauthorized")
         return user, db

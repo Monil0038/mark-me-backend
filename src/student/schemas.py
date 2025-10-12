@@ -22,7 +22,7 @@ class StudentLoginRequest(BaseModel):
     enrollment_no: str
     password: str
 
-class StudentResponse(StudentUpdate):
+class StudentResponse(StudentUpdate, BaseSchema):
     role: str = UserRoles.STUDENT.value
     is_active: bool = True
     is_banned: bool = False

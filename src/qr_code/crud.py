@@ -1,4 +1,3 @@
-
 from src.qr_code.models import QRCode
 from src.qr_code.schema import QrCodeBaseSchema, QrCodeUpdateSchema
 

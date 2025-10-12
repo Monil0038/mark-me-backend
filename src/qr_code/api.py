@@ -30,7 +30,7 @@ async def register_student_by_csv(
         "regenerate_interval_seconds": int(request.regenerate_interval_seconds),
     }
 
-    qr_code_crud.create(db=db, obj_in=QrCodeBaseSchema(
+    qr_code = qr_code_crud.create(db=db, obj_in=QrCodeBaseSchema(
             name=request.name,
             qr_code_data=data,
             expiry_time=end_time,
@@ -39,6 +39,8 @@ async def register_student_by_csv(
             updated_by=user.id
         )
     )
+
+    data["qr_code_id"] = qr_code.id
 
     # Generate QR code
     qr = qrcode.QRCode(version=1, box_size=10, border=4)
