@@ -20,7 +20,7 @@ def create_attendance(request: AttendanceRequestSchema, db: get_db):
         if is_exist:
             raise HTTPException(status_code=status.HTTP_208_ALREADY_REPORTED, detail="Already present")
 
-        attendance = attendance_crud.create(db=db, obj_in=AttendanceBaseSchema(created_by=user.firstname + " " + user.lastname, updated_by=user.firstname + " " + user.lastname, status=AttendanceEnum.PRESENT.value, **request.model_dump(exclude_unset=True)))
+        attendance = attendance_crud.create(db=db, obj_in=AttendanceBaseSchema(created_by="dhruv", updated_by="dhruv", status=AttendanceEnum.PRESENT.value, **request.model_dump(exclude_unset=True)))
         return attendance
     except HTTPException:
         raise
