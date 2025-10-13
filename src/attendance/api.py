@@ -1,3 +1,4 @@
+import logging
 from typing import List
 from fastapi import APIRouter, status, HTTPException
 
@@ -24,7 +25,11 @@ def create_attendance(request: AttendanceRequestSchema, db: get_db):
     except HTTPException:
         raise
     except Exception as e:
-        pass
+        logging.exception("===REASON===: %s", str(e))
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Something went wrong"
+        )
 
 @attendance_router.post("/student/{student_id}/attendance", status_code=status.HTTP_201_CREATED, response_model=List[AttendanceBaseSchema])
 def retrieve_by_student_id(student_id: str, user_db: is_authorized_for([UserRoles.STUDENT.value, UserRoles.SUPER_ADMIN.value])):
